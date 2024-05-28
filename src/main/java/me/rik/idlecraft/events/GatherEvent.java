@@ -24,6 +24,15 @@ public class GatherEvent implements Listener {
         final Material blockMaterial = e.getBlock().getType();
 
 
+        Event test = new Event(() -> {
+
+
+
+        });
+
+        PlayerEventManager.handleEvent(e.getPlayer().getUniqueId(), test);
+
+
         ResourceService.gatherableResources.forEach(gr ->
         {
             if (gr.material == blockMaterial)
@@ -36,9 +45,13 @@ public class GatherEvent implements Listener {
                     Backpack backpack = BackpackService.getBackpack(uuid);
 
                     int newAmount = backpack.items.getOrDefault(gr.id, 0) + 1;
-                    backpack.items.put(gr.id, newAmount);
 
-                    BackpackService.updateBackpack(uuid, gr.id, newAmount);
+                    for (int i = 0; i < 4000; i++)
+                    {
+                        backpack.items.put(gr.id, newAmount);
+                        BackpackService.updateBackpack(uuid, gr.id, newAmount);
+                        newAmount++;
+                    }
 
                     player.sendMessage("you now have " + newAmount + " of item " + gr.id);
                 });
