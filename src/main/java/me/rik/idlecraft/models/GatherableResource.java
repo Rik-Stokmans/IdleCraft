@@ -2,8 +2,6 @@ package me.rik.idlecraft.models;
 
 import org.bukkit.Material;
 
-import java.util.ArrayList;
-
 public class GatherableResource
 {
 
