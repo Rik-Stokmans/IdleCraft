@@ -48,9 +48,7 @@ public class GatherEvent implements Listener {
 
                 e.getBlock().setType(Material.STONE);
 
-                Bukkit.getScheduler().runTaskLater(IdleCraft.plugin, () -> {
-                    e.getBlock().setType(blockMaterial);
-                }, 50);
+                Bukkit.getScheduler().runTaskLater(IdleCraft.plugin, () -> e.getBlock().setType(blockMaterial), 50);
             }
         });
 
