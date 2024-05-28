@@ -1,0 +1,4 @@
+name: IdleCraft
+version: '${version}'
+main: me.rik.idlecraft.IdleCraft
+api-version: '1.20'
