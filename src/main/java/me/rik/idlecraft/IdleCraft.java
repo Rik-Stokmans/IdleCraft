@@ -1,11 +1,13 @@
 package me.rik.idlecraft;
 
-import me.rik.idlecraft.database.BackpackService;
 import me.rik.idlecraft.database.DatabaseConnection;
+import me.rik.idlecraft.database.MultiblockService;
 import me.rik.idlecraft.database.ResourceService;
 import me.rik.idlecraft.events.GatherEvent;
 import me.rik.idlecraft.events.JoinEvent;
 import me.rik.idlecraft.events.LeaveEvent;
+import me.rik.idlecraft.events.MultiblockPlace;
+import me.rik.idlecraft.interfaces.IMultiBlock;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,6 +43,15 @@ public final class IdleCraft extends JavaPlugin
         ResourceService.gatherableResources =  ResourceService.getResources();
 
 
+        // Initialize all multiblocks
+
+        MultiblockService.getAllMultiblocks().forEach(multiblock -> {
+            multiblock.place();
+
+            IMultiBlock.addToPlayerMultiblocks(multiblock.uuid, multiblock);
+        });
+
+
         // Adding all events
 
         ArrayList<Listener> events = new ArrayList<>();
@@ -48,6 +59,7 @@ public final class IdleCraft extends JavaPlugin
         events.add(new GatherEvent());
         events.add(new JoinEvent());
         events.add(new LeaveEvent());
+        events.add(new MultiblockPlace());
 
         for (Listener l : events) {
             getServer().getPluginManager().registerEvents(l, this);
@@ -58,6 +70,8 @@ public final class IdleCraft extends JavaPlugin
     public void onDisable()
     {
         // Plugin shutdown logic
+
+        IMultiBlock.playerMultiblocks.keySet().forEach(uuid -> IMultiBlock.playerMultiblocks.get(uuid).forEach(IMultiBlock::removeFromWorld));
 
         getLogger().info("Stopping IdleCraft");
 

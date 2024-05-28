@@ -34,4 +34,14 @@ public class ResourceService
             throw new RuntimeException(e);
         }
     }
+
+    public static int inGatherableResources(Material material)
+    {
+        for (GatherableResource gr : gatherableResources)
+        {
+            if (gr.material == material) return gr.id;
+        }
+
+        return -1;
+    }
 }

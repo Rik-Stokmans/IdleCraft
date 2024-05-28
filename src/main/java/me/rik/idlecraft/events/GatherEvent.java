@@ -7,8 +7,8 @@ import me.rik.idlecraft.events.eventmanger.Event;
 import me.rik.idlecraft.events.eventmanger.PlayerEventManager;
 import me.rik.idlecraft.models.Backpack;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -20,36 +20,36 @@ public class GatherEvent implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e)
     {
-
         final Material blockMaterial = e.getBlock().getType();
+        final UUID uuid = e.getPlayer().getUniqueId();
 
 
-        ResourceService.gatherableResources.forEach(gr ->
+        int gatherableResourcesId = ResourceService.inGatherableResources(blockMaterial);
+        if (gatherableResourcesId == -1 ) return;
+
+        Event event = new Event(() ->
         {
-            if (gr.material == blockMaterial)
-            {
-                Event event = new Event(() ->
-                {
-                    Player player = e.getPlayer();
-                    UUID uuid = player.getUniqueId();
+            Backpack backpack = BackpackService.getBackpack(uuid);
 
-                    Backpack backpack = BackpackService.getBackpack(uuid);
+            int newAmount = backpack.items.getOrDefault(gatherableResourcesId, 0) + 1;
 
-                    int newAmount = backpack.items.getOrDefault(gr.id, 0) + 1;
-                    backpack.items.put(gr.id, newAmount);
+            backpack.items.put(gatherableResourcesId, newAmount);
+            BackpackService.updateBackpack(uuid, gatherableResourcesId, newAmount);
 
-                    BackpackService.updateBackpack(uuid, gr.id, newAmount);
-
-                    player.sendMessage("you now have " + newAmount + " of item " + gr.id);
-                });
-
-                PlayerEventManager.handleEvent(e.getPlayer().getUniqueId(), event);
-
-                e.getBlock().setType(Material.STONE);
-
-                Bukkit.getScheduler().runTaskLater(IdleCraft.plugin, () -> e.getBlock().setType(blockMaterial), 50);
-            }
+            e.getPlayer().sendMessage("You now have " + newAmount + " " + blockMaterial + " in your backpack.");
         });
+
+        PlayerEventManager.handleEvent(uuid, event);
+
+        e.getBlock().setType(Material.STONE);
+
+        Bukkit.getScheduler().runTaskLater(IdleCraft.plugin, () -> e.getBlock().setType(blockMaterial), 50);
+    }
+
+    @EventHandler
+    public void onBlockBreakCancel(BlockBreakEvent e)
+    {
+        if (e.getPlayer().getGameMode() == GameMode.CREATIVE) return;
 
         e.setCancelled(true);
     }

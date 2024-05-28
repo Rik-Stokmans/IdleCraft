@@ -50,8 +50,6 @@ public class BackpackService {
 
             if (rs == 0) createBackpackItem(uuid, item, amount);
 
-            System.out.println("Updated backpack " + uuid + " " + item + " " + amount + " changed: " + rs + " rows");
-
         }
         catch (SQLException e)
         {
@@ -72,7 +70,6 @@ public class BackpackService {
             int rs = ps.executeUpdate();
 
             if (rs > 0) {
-                System.out.println("Updated backpack " + uuid + " " + item + " " + amount + " changed: " + rs + " rows");
                 return;
             }
 
