@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class CraftingTable extends IMultiBlock
@@ -48,21 +49,32 @@ public class CraftingTable extends IMultiBlock
 
     private void placeDisplays()
     {
-        BlockDisplay display = location.getWorld().spawn(location.clone().add(new Vector(-1, 0, -1)), BlockDisplay.class);
+        ArrayList<BlockDisplay> displayArrayList = new ArrayList<>();
 
-        display.setBlock(Material.CRAFTING_TABLE.createBlockData());
+        for (int x = -xSize / 2; x < xSize -xSize/2; x++)
+        {
+            for (int z = -zSize / 2; z < zSize - zSize/2; z++)
+            {
+                displayArrayList.add(location.getWorld().spawn(location.clone().add(new Vector(x, 0, z)), BlockDisplay.class));
+            }
+        }
+
+        System.out.println("Placed " + displayArrayList.size() + " displays");
 
         Transformation transformation = new Transformation
                 (
                         new Vector3f(),
                         new AxisAngle4f(),
-                        new Vector3f(xSize, ySize, zSize),
+                        new Vector3f(1, 1, 1),
                         new AxisAngle4f()
                 );
 
-        display.setTransformation(transformation);
-
-        displays.add(display);
+        for (int i = 0; i < displayArrayList.size(); i++)
+        {
+            displayArrayList.get(i).setBlock((i%2 == 0) ? Material.BROWN_CONCRETE.createBlockData() : Material.BROWN_TERRACOTTA.createBlockData());
+            displayArrayList.get(i).setTransformation(transformation);
+            displays.add(displayArrayList.get(i));
+        }
     }
 
 
