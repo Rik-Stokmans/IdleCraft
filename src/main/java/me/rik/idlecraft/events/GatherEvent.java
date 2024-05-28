@@ -7,6 +7,7 @@ import me.rik.idlecraft.events.eventmanger.Event;
 import me.rik.idlecraft.events.eventmanger.PlayerEventManager;
 import me.rik.idlecraft.models.Backpack;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -48,7 +49,7 @@ public class GatherEvent implements Listener {
     @EventHandler
     public void onBlockBreakCancel(BlockBreakEvent e)
     {
-        //if (e.getPlayer().getGameMode() == GameMode.CREATIVE) return;
+        if (e.getPlayer().getGameMode() == GameMode.CREATIVE) return;
 
         e.setCancelled(true);
     }
