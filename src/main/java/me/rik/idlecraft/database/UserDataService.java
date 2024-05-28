@@ -13,21 +13,12 @@ public class UserDataService
     {
         try
         {
-            long psStart = System.currentTimeMillis();
 
             PreparedStatement ps = DatabaseConnection.getConnection(uuid).prepareStatement("SELECT uuid, money FROM users WHERE uuid = ?");
 
             ps.setString(1, uuid.toString());
 
-            long psEnd = System.currentTimeMillis();
-            psTime += psEnd - psStart;
-
-            long rsStart = System.currentTimeMillis();
-
             ResultSet rs = ps.executeQuery();
-
-            long rsEnd = System.currentTimeMillis();
-            rsTime += rsEnd - rsStart;
 
             if (rs.next()) {
                 double money = rs.getDouble("money");

@@ -48,6 +48,8 @@ public class BackpackService {
 
             int rs = ps.executeUpdate();
 
+            if (rs == 0) createBackpackItem(uuid, item, amount);
+
             System.out.println("Updated backpack " + uuid + " " + item + " " + amount + " changed: " + rs + " rows");
 
         }
@@ -56,4 +58,30 @@ public class BackpackService {
             throw new RuntimeException(e);
         }
     }
+
+    public static void createBackpackItem(UUID uuid, int item, int amount) {
+
+        try
+        {
+            PreparedStatement ps = DatabaseConnection.getConnection(uuid).prepareStatement("INSERT INTO backpack (uuid, item, amount) VALUES (?, ?, ?)");
+
+            ps.setString(1, uuid.toString());
+            ps.setInt(2, item);
+            ps.setInt(3, amount);
+
+            int rs = ps.executeUpdate();
+
+            if (rs > 0) {
+                System.out.println("Updated backpack " + uuid + " " + item + " " + amount + " changed: " + rs + " rows");
+                return;
+            }
+
+            throw new RuntimeException("Failed to create backpack item");
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
