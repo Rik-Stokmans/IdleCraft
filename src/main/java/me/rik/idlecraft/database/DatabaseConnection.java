@@ -1,7 +1,6 @@
 package me.rik.idlecraft.database;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -85,17 +84,17 @@ public class DatabaseConnection
 
     public static void closeAllConnections() {
         databaseConnectionHashMap.keySet().forEach(uuid -> {
-            if (databaseConnectionHashMap.get(uuid) == null) return;
 
             try
             {
                 databaseConnectionHashMap.get(uuid).close();
-                databaseConnectionHashMap = new HashMap<>();
             }
             catch (SQLException e)
             {
                 throw new RuntimeException(e);
             }
+
+            databaseConnectionHashMap = new HashMap<>();
         });
     }
 }
