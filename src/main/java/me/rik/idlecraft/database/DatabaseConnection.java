@@ -67,13 +67,13 @@ public class DatabaseConnection
 
     public static void closeConnection(UUID uuid)
     {
-        if (!databaseConnectionHashMap.containsKey(uuid)) return;
+        Connection connection = databaseConnectionHashMap.getOrDefault(uuid, null);
 
-        if (databaseConnectionHashMap.get(uuid) == null) return;
+        if (connection == null) return;
 
         try
         {
-            databaseConnectionHashMap.get(uuid).close();
+            connection.close();
             databaseConnectionHashMap.remove(uuid);
         }
         catch (SQLException e)
