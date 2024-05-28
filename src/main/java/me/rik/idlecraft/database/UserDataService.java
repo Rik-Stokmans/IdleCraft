@@ -65,7 +65,7 @@ public class UserDataService
         }
     }
 
-    public static boolean updateUser(User user)
+    public static void updateUser(User user)
     {
         try
         {
@@ -86,7 +86,6 @@ public class UserDataService
             long rsEnd = System.currentTimeMillis();
             rsTime += rsEnd - rsStart;
 
-            return rs == 1;
         }
         catch (SQLException e)
         {

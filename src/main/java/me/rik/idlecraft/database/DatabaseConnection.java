@@ -12,6 +12,7 @@ import java.util.UUID;
 public class DatabaseConnection
 {
     public static HashMap<UUID, Connection> databaseConnectionHashMap = new HashMap<>();
+    public static Connection serverConnection;
 
     private static final String url = "jdbc:mariadb://localhost:3306/MinecraftServer";
     private static final String password = "java";
@@ -22,6 +23,8 @@ public class DatabaseConnection
         try
         {
             Class.forName("org.mariadb.jdbc.Driver");
+
+            serverConnection = DriverManager.getConnection(url, user, password);
 
             Bukkit.getOnlinePlayers().forEach(player -> {
                 try
@@ -34,11 +37,9 @@ public class DatabaseConnection
                 }
             });
         }
-        catch (ClassNotFoundException e)
+        catch (ClassNotFoundException | SQLException e)
         {
-
             throw new RuntimeException(e);
-
         }
     }
 

@@ -1,6 +1,8 @@
 package me.rik.idlecraft;
 
+import me.rik.idlecraft.database.BackpackService;
 import me.rik.idlecraft.database.DatabaseConnection;
+import me.rik.idlecraft.database.ResourceService;
 import me.rik.idlecraft.events.GatherEvent;
 import me.rik.idlecraft.events.JoinEvent;
 import me.rik.idlecraft.events.LeaveEvent;
@@ -32,6 +34,11 @@ public final class IdleCraft extends JavaPlugin
 
         DatabaseConnection.init();
         getLogger().info("IdleCraft has connected to database");
+
+
+        // Initialize gatherable resources
+
+        ResourceService.gatherableResources =  ResourceService.getResources();
 
 
         // Adding all events
