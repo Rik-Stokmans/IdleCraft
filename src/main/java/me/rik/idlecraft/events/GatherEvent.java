@@ -3,7 +3,6 @@ package me.rik.idlecraft.events;
 import me.rik.idlecraft.IdleCraft;
 import me.rik.idlecraft.database.BackpackService;
 import me.rik.idlecraft.database.ResourceService;
-import me.rik.idlecraft.database.UserDataService;
 import me.rik.idlecraft.events.eventmanger.Event;
 import me.rik.idlecraft.events.eventmanger.PlayerEventManager;
 import me.rik.idlecraft.models.Backpack;
@@ -48,9 +47,7 @@ public class GatherEvent implements Listener {
 
                 e.getBlock().setType(Material.STONE);
 
-                Bukkit.getScheduler().runTaskLater(IdleCraft.plugin, () -> {
-                    e.getBlock().setType(blockMaterial);
-                }, 50);
+                Bukkit.getScheduler().runTaskLater(IdleCraft.plugin, () -> e.getBlock().setType(blockMaterial), 50);
             }
         });
 
