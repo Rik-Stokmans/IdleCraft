@@ -7,7 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.joml.Vector3f;
@@ -16,7 +15,7 @@ import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 
-public abstract class IMultiBlock implements Listener
+public abstract class IMultiBlock
 {
     public UUID uuid;
     public Location location;
@@ -25,22 +24,20 @@ public abstract class IMultiBlock implements Listener
 
     public static HashMap<UUID, ArrayList<IMultiBlock>> playerMultiblocks = new HashMap<>();
 
+
+    public IMultiBlock(Location location, UUID uuid) {
+        this.location = location;
+        this.uuid = uuid;
+        inventory = initInventory();
+    }
+
+
     public static void addToPlayerMultiblocks(UUID uuid, IMultiBlock multiBlock) {
         if (playerMultiblocks.containsKey(uuid)) {
             playerMultiblocks.get(uuid).add(multiBlock);
         } else {
             playerMultiblocks.put(uuid, new ArrayList<>(List.of(multiBlock)));
         }
-    }
-
-    public IMultiBlock(Location location, UUID uuid) {
-        this.location = location;
-        this.uuid = uuid;
-        inventory = getInventory();
-    }
-
-    public IMultiBlock() {
-        this(new Location(Bukkit.getWorld("world"), 0, 0, 0), UUID.randomUUID());
     }
 
 
@@ -127,7 +124,7 @@ public abstract class IMultiBlock implements Listener
 
     public abstract void handleInventoryClick(InventoryClickEvent e);
 
-    public abstract Inventory getInventory();
+    public abstract Inventory initInventory();
 
     public abstract int getType();
 

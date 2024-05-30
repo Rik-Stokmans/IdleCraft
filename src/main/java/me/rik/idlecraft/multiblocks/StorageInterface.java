@@ -5,7 +5,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.BlockDisplay;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +34,7 @@ public class StorageInterface extends IMultiBlock
 
         ArrayList<BlockDisplay> displayArrayList = new ArrayList<>();
 
-        for (int x = -xSize / 2; x < xSize -xSize/2; x++)
+        for (int x = -xSize / 2; x < xSize - xSize / 2; x++)
         {
             for (int y = 0; y < ySize; y++)
             {
@@ -63,20 +62,19 @@ public class StorageInterface extends IMultiBlock
     }
 
     @Override
-    public Inventory getInventory()
+    public Inventory initInventory()
     {
         Inventory inventory = Bukkit.createInventory(null, 27);
 
-        inventory.setItem(26 ,new ItemStack(Material.BARRIER, 1));
+        inventory.setItem(26, new ItemStack(Material.BARRIER, 1));
 
         return inventory;
     }
 
     @Override
-    @EventHandler
     public void handleInventoryClick(InventoryClickEvent e)
     {
-        if (e.getInventory().equals(inventory))
+        if (inventory == e.getClickedInventory())
         {
             e.setCancelled(true);
             System.out.println("Clicked on storage interface");

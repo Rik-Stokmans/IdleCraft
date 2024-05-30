@@ -5,7 +5,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.BlockDisplay;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.util.Transformation;
@@ -33,9 +32,9 @@ public class CraftingTable extends IMultiBlock
 
         ArrayList<BlockDisplay> displayArrayList = new ArrayList<>();
 
-        for (int x = -xSize / 2; x < xSize -xSize/2; x++)
+        for (int x = -xSize / 2; x < xSize - xSize / 2; x++)
         {
-            for (int z = -zSize / 2; z < zSize - zSize/2; z++)
+            for (int z = -zSize / 2; z < zSize - zSize / 2; z++)
             {
                 displayArrayList.add(location.getWorld().spawn(location.clone().add(new Vector(x, 0, z)), BlockDisplay.class));
             }
@@ -53,14 +52,14 @@ public class CraftingTable extends IMultiBlock
 
         for (int i = 0; i < displayArrayList.size(); i++)
         {
-            displayArrayList.get(i).setBlock((i%2 == 0) ? Material.BROWN_CONCRETE.createBlockData() : Material.BROWN_TERRACOTTA.createBlockData());
+            displayArrayList.get(i).setBlock((i % 2 == 0) ? Material.BROWN_CONCRETE.createBlockData() : Material.BROWN_TERRACOTTA.createBlockData());
             displayArrayList.get(i).setTransformation(transformation);
             displays.add(displayArrayList.get(i));
         }
     }
 
     @Override
-    public Inventory getInventory()
+    public Inventory initInventory()
     {
         Inventory inventory = Bukkit.createInventory(null, 27);
 
@@ -68,10 +67,9 @@ public class CraftingTable extends IMultiBlock
     }
 
     @Override
-    @EventHandler
     public void handleInventoryClick(InventoryClickEvent e)
     {
-        if (e.getInventory().equals(inventory))
+        if (inventory == e.getClickedInventory())
         {
             e.setCancelled(true);
             System.out.println("Clicked on crafting table interface");

@@ -6,15 +6,12 @@ import me.rik.idlecraft.database.ResourceService;
 import me.rik.idlecraft.events.GatherEvent;
 import me.rik.idlecraft.events.JoinEvent;
 import me.rik.idlecraft.events.LeaveEvent;
-import me.rik.idlecraft.events.MultiblockPlace;
+import me.rik.idlecraft.events.MultiblockListener;
 import me.rik.idlecraft.interfaces.IMultiBlock;
 import me.rik.idlecraft.multiblocks.CraftingTable;
 import me.rik.idlecraft.multiblocks.RobotArm;
 import me.rik.idlecraft.multiblocks.StorageInterface;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -65,10 +62,7 @@ public final class IdleCraft extends JavaPlugin
         events.add(new GatherEvent());
         events.add(new JoinEvent());
         events.add(new LeaveEvent());
-        events.add(new MultiblockPlace());
-        events.add(new CraftingTable(null,null));
-        events.add(new RobotArm(null,null));
-        events.add(new StorageInterface(null,null));
+        events.add(new MultiblockListener());
 
         for (Listener l : events) {
             getServer().getPluginManager().registerEvents(l, this);
