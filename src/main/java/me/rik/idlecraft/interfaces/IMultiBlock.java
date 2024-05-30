@@ -9,9 +9,12 @@ import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.joml.Vector3f;
 
 import java.util.*;
+import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 
@@ -20,6 +23,7 @@ public abstract class IMultiBlock
     public UUID uuid;
     public Location location;
     public List<Display> displays = new ArrayList<>();
+    public Map<ItemStack, Function<InventoryClickEvent, Runnable>> guiActions = new HashMap<>();
     public Inventory inventory;
 
     public static HashMap<UUID, ArrayList<IMultiBlock>> playerMultiblocks = new HashMap<>();
@@ -28,9 +32,8 @@ public abstract class IMultiBlock
     public IMultiBlock(Location location, UUID uuid) {
         this.location = location;
         this.uuid = uuid;
-        inventory = initInventory();
+        initInventory();
     }
-
 
     public static void addToPlayerMultiblocks(UUID uuid, IMultiBlock multiBlock) {
         if (playerMultiblocks.containsKey(uuid)) {
@@ -39,7 +42,6 @@ public abstract class IMultiBlock
             playerMultiblocks.put(uuid, new ArrayList<>(List.of(multiBlock)));
         }
     }
-
 
     public void place() {
         int blockX = location.getBlockX();
@@ -64,9 +66,7 @@ public abstract class IMultiBlock
         placeDisplays();
     }
 
-
     public abstract void placeDisplays();
-
 
     public void destroy() {
         hide();
@@ -122,11 +122,33 @@ public abstract class IMultiBlock
         player.openInventory(inventory);
     }
 
-    public abstract void handleInventoryClick(InventoryClickEvent e);
+    public abstract void initGuiActions();
 
-    public abstract Inventory initInventory();
+    public abstract Inventory populateInventory(Inventory inventory);
+
+    public void handleInventoryClick(InventoryClickEvent e)
+    {
+        if (inventory == e.getClickedInventory())
+        {
+            e.setCancelled(true);
+
+            ItemStack clickedItem = e.getCurrentItem();
+
+            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
+            guiActions.getOrDefault(clickedItem, inventoryClickEvent -> () -> {}).apply(e).run();
+        }
+    }
+
+    public void initInventory() {
+        initGuiActions();
+
+        inventory = populateInventory(Bukkit.createInventory(null, getInventorySize()));
+    }
 
     public abstract int getType();
+
+    public abstract int getInventorySize();
 
     public abstract int getXSize();
 

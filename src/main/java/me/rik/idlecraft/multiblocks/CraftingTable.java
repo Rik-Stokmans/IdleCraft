@@ -7,12 +7,14 @@ import org.bukkit.Material;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class CraftingTable extends IMultiBlock
@@ -58,28 +60,33 @@ public class CraftingTable extends IMultiBlock
         }
     }
 
+
     @Override
-    public Inventory initInventory()
+    public void initGuiActions() {
+        guiActions.put(new ItemStack(Material.BARRIER, 1), inventoryClickEvent -> () -> {
+            inventoryClickEvent.getWhoClicked().sendMessage("You clicked the crafting table!");
+        });
+    }
+
+    @Override
+    public Inventory populateInventory(Inventory inventory)
     {
-        Inventory inventory = Bukkit.createInventory(null, 27);
+        inventory.setItem(0, guiActions.keySet().stream().filter(itemStack -> itemStack.getType() == Material.BARRIER).findFirst().orElse(new ItemStack(Material.RED_STAINED_GLASS_PANE, 1)));
 
         return inventory;
     }
 
-    @Override
-    public void handleInventoryClick(InventoryClickEvent e)
-    {
-        if (inventory == e.getClickedInventory())
-        {
-            e.setCancelled(true);
-            System.out.println("Clicked on crafting table interface");
-        }
-    }
 
     @Override
     public int getType()
     {
         return 1;
+    }
+
+    @Override
+    public int getInventorySize()
+    {
+        return 27;
     }
 
     @Override

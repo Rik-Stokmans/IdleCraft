@@ -1,11 +1,9 @@
 package me.rik.idlecraft.multiblocks;
 
 import me.rik.idlecraft.interfaces.IMultiBlock;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.BlockDisplay;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Transformation;
@@ -18,7 +16,6 @@ import java.util.UUID;
 
 public class StorageInterface extends IMultiBlock
 {
-
     public StorageInterface(Location location, UUID uuid)
     {
         super(location, uuid);
@@ -62,23 +59,18 @@ public class StorageInterface extends IMultiBlock
     }
 
     @Override
-    public Inventory initInventory()
-    {
-        Inventory inventory = Bukkit.createInventory(null, 27);
-
-        inventory.setItem(26, new ItemStack(Material.BARRIER, 1));
-
-        return inventory;
+    public void initGuiActions() {
+        guiActions.put(new ItemStack(Material.BARRIER, 1), inventoryClickEvent -> () -> {
+            inventoryClickEvent.getWhoClicked().sendMessage("You clicked the storage interface!");
+        });
     }
 
     @Override
-    public void handleInventoryClick(InventoryClickEvent e)
+    public Inventory populateInventory(Inventory inventory)
     {
-        if (inventory == e.getClickedInventory())
-        {
-            e.setCancelled(true);
-            System.out.println("Clicked on storage interface");
-        }
+        inventory.setItem(13, guiActions.keySet().stream().filter(itemStack -> itemStack.getType() == Material.BARRIER).findFirst().orElse(new ItemStack(Material.RED_STAINED_GLASS_PANE, 1)));
+
+        return inventory;
     }
 
     @Override
@@ -87,6 +79,11 @@ public class StorageInterface extends IMultiBlock
         return 3;
     }
 
+    @Override
+    public int getInventorySize()
+    {
+        return 27;
+    }
 
     @Override
     public int getXSize()
