@@ -1,9 +1,13 @@
 package me.rik.idlecraft.multiblocks;
 
 import me.rik.idlecraft.interfaces.IMultiBlock;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.BlockDisplay;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.AxisAngle4f;
@@ -18,6 +22,7 @@ public class CraftingTable extends IMultiBlock
     {
         super(location, uuid);
     }
+
 
     @Override
     public void placeDisplays()
@@ -54,6 +59,24 @@ public class CraftingTable extends IMultiBlock
         }
     }
 
+    @Override
+    public Inventory getInventory()
+    {
+        Inventory inventory = Bukkit.createInventory(null, 27);
+
+        return inventory;
+    }
+
+    @Override
+    @EventHandler
+    public void handleInventoryClick(InventoryClickEvent e)
+    {
+        if (e.getInventory().equals(inventory))
+        {
+            e.setCancelled(true);
+            System.out.println("Clicked on crafting table interface");
+        }
+    }
 
     @Override
     public int getType()

@@ -25,7 +25,7 @@ public class DatabaseConnection
 
             serverConnection = DriverManager.getConnection(url, user, password);
 
-            Bukkit.getOnlinePlayers().forEach(player -> {
+                    Bukkit.getOnlinePlayers().forEach(player -> {
                 try
                 {
                     databaseConnectionHashMap.put(player.getUniqueId(), DriverManager.getConnection(url, user, password));
@@ -96,5 +96,14 @@ public class DatabaseConnection
 
             databaseConnectionHashMap = new HashMap<>();
         });
+
+        try
+        {
+            serverConnection.close();
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }
