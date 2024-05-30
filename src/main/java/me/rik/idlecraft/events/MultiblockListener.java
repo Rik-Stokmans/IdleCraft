@@ -5,12 +5,14 @@ import me.rik.idlecraft.interfaces.IMultiBlock;
 import me.rik.idlecraft.multiblocks.CraftingTable;
 import me.rik.idlecraft.multiblocks.RobotArm;
 import me.rik.idlecraft.multiblocks.StorageInterface;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class MultiblockPlace implements Listener
+public class MultiblockListener implements Listener
 {
 
     @EventHandler
@@ -49,10 +51,10 @@ public class MultiblockPlace implements Listener
         e.setCancelled(true);
     }
 
-
-
+    @Deprecated
     @EventHandler
-    public void onMultiblockBreak(BlockBreakEvent e) {
+    public void onMultiblockBreak(BlockBreakEvent e)
+    {
         UUID uuid = e.getPlayer().getUniqueId();
 
         List<IMultiBlock> multiBlocks = IMultiBlock.playerMultiblocks.getOrDefault(uuid, new ArrayList<>());
@@ -71,8 +73,10 @@ public class MultiblockPlace implements Listener
 
     }
 
+
     @EventHandler
-    public void onMultiblockInteract(PlayerInteractEvent e) {
+    public void onMultiblockInteract(PlayerInteractEvent e)
+    {
         if (!e.getAction().isRightClick()) return;
 
         if (e.getClickedBlock() == null || e.getClickedBlock().getType() != Material.BARRIER || e.getHand().ordinal() == 1) return;
@@ -90,5 +94,41 @@ public class MultiblockPlace implements Listener
         // Destroy the multiBlock if found
         multiBlockToInteract.ifPresent(IMultiBlock::interact);
     }
+
+
+    @EventHandler
+    public void unMultiblockInventoryClick(InventoryClickEvent e)
+    {
+        UUID uuid = e.getWhoClicked().getUniqueId();
+
+        List<IMultiBlock> multiBlocks = IMultiBlock.playerMultiblocks.getOrDefault(uuid, new ArrayList<>());
+
+        multiBlocks.forEach(multiBlock -> multiBlock.handleInventoryClick(e));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
