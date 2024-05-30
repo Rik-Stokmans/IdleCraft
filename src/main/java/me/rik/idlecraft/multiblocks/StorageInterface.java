@@ -12,12 +12,14 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class CraftingTable extends IMultiBlock
+public class StorageInterface extends IMultiBlock
 {
-    public CraftingTable(Location location, UUID uuid)
+
+    public StorageInterface(Location location, UUID uuid)
     {
         super(location, uuid);
     }
+
 
     @Override
     public void placeDisplays()
@@ -30,13 +32,14 @@ public class CraftingTable extends IMultiBlock
 
         for (int x = -xSize / 2; x < xSize -xSize/2; x++)
         {
-            for (int z = -zSize / 2; z < zSize - zSize/2; z++)
+            for (int y = 0; y < ySize; y++)
             {
-                displayArrayList.add(location.getWorld().spawn(location.clone().add(new Vector(x, 0, z)), BlockDisplay.class));
+                for (int z = -zSize / 2; z < zSize - zSize / 2; z++)
+                {
+                    displayArrayList.add(location.getWorld().spawn(location.clone().add(new Vector(x, y, z)), BlockDisplay.class));
+                }
             }
         }
-
-        System.out.println("Placed " + displayArrayList.size() + " displays");
 
         Transformation transformation = new Transformation
                 (
@@ -46,38 +49,36 @@ public class CraftingTable extends IMultiBlock
                         new AxisAngle4f()
                 );
 
-        for (int i = 0; i < displayArrayList.size(); i++)
+        for (BlockDisplay blockDisplay : displayArrayList)
         {
-            displayArrayList.get(i).setBlock((i%2 == 0) ? Material.BROWN_CONCRETE.createBlockData() : Material.BROWN_TERRACOTTA.createBlockData());
-            displayArrayList.get(i).setTransformation(transformation);
-            displays.add(displayArrayList.get(i));
+            blockDisplay.setBlock(Material.BARREL.createBlockData());
+            blockDisplay.setTransformation(transformation);
+            displays.add(blockDisplay);
         }
     }
-
 
     @Override
     public int getType()
     {
-        return 1;
+        return 3;
     }
+
 
     @Override
     public int getXSize()
     {
-        return 3;
+        return 2;
     }
 
     @Override
     public int getYSize()
     {
-        return 1;
+        return 2;
     }
 
     @Override
     public int getZSize()
     {
-        return 3;
+        return 2;
     }
-
-
 }

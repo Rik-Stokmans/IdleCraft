@@ -12,12 +12,14 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class CraftingTable extends IMultiBlock
+public class RobotArm extends IMultiBlock
 {
-    public CraftingTable(Location location, UUID uuid)
+
+    public RobotArm(Location location, UUID uuid)
     {
         super(location, uuid);
     }
+
 
     @Override
     public void placeDisplays()
@@ -30,13 +32,14 @@ public class CraftingTable extends IMultiBlock
 
         for (int x = -xSize / 2; x < xSize -xSize/2; x++)
         {
-            for (int z = -zSize / 2; z < zSize - zSize/2; z++)
+            for (int y = 0; y < ySize; y++)
             {
-                displayArrayList.add(location.getWorld().spawn(location.clone().add(new Vector(x, 0, z)), BlockDisplay.class));
+                for (int z = -zSize / 2; z < zSize - zSize / 2; z++)
+                {
+                    displayArrayList.add(location.getWorld().spawn(location.clone().add(new Vector(x, y, z)), BlockDisplay.class));
+                }
             }
         }
-
-        System.out.println("Placed " + displayArrayList.size() + " displays");
 
         Transformation transformation = new Transformation
                 (
@@ -48,36 +51,34 @@ public class CraftingTable extends IMultiBlock
 
         for (int i = 0; i < displayArrayList.size(); i++)
         {
-            displayArrayList.get(i).setBlock((i%2 == 0) ? Material.BROWN_CONCRETE.createBlockData() : Material.BROWN_TERRACOTTA.createBlockData());
+            displayArrayList.get(i).setBlock(Material.REDSTONE_BLOCK.createBlockData());
             displayArrayList.get(i).setTransformation(transformation);
             displays.add(displayArrayList.get(i));
         }
     }
 
-
     @Override
     public int getType()
     {
-        return 1;
+        return 2;
     }
+
 
     @Override
     public int getXSize()
     {
-        return 3;
+        return 2;
     }
 
     @Override
     public int getYSize()
     {
-        return 1;
+        return 2;
     }
 
     @Override
     public int getZSize()
     {
-        return 3;
+        return 2;
     }
-
-
 }
