@@ -3,10 +3,15 @@ package me.rik.idlecraft.events;
 import me.rik.idlecraft.database.MultiblockService;
 import me.rik.idlecraft.interfaces.IMultiBlock;
 import me.rik.idlecraft.multiblocks.CraftingTable;
+import me.rik.idlecraft.multiblocks.RobotArm;
+import me.rik.idlecraft.multiblocks.StorageInterface;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,20 +22,25 @@ public class MultiblockPlace implements Listener
 {
 
     @EventHandler
-    public void onBlockPlace(BlockPlaceEvent e)
+    public void onMultiblockPlace(BlockPlaceEvent e)
     {
+        Location location = e.getBlock().getLocation();
         UUID uuid = e.getPlayer().getUniqueId();
 
         IMultiBlock multiBlock = null;
 
         switch (e.getBlock().getType()) {
-            case CRAFTING_TABLE -> multiBlock = new CraftingTable(e.getBlock().getLocation(), uuid);
+            case CRAFTING_TABLE -> multiBlock = new CraftingTable(location, uuid);
+            case OBSERVER -> multiBlock = new RobotArm(location, uuid);
+            case BARREL -> multiBlock = new StorageInterface(location, uuid);
             default -> {}
         }
 
         if (multiBlock == null) {
             return;
         }
+
+        e.getPlayer().sendMessage("Placing multiblock: " + multiBlock.getType());
 
         multiBlock.place();
         MultiblockService.createMultiblock(e.getPlayer().getUniqueId(), multiBlock);
@@ -42,29 +52,43 @@ public class MultiblockPlace implements Listener
 
 
     @EventHandler
-    public void onBlockBreak(BlockBreakEvent e) {
+    public void onMultiblockBreak(BlockBreakEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
 
         List<IMultiBlock> multiBlocks = IMultiBlock.playerMultiblocks.getOrDefault(uuid, new ArrayList<>());
 
         e.getPlayer().sendMessage("Found " + multiBlocks.size() + " multiblocks");
-        e.getPlayer().sendMessage("Block broken at " + e.getBlock().getLocation().getX() + ", " + e.getBlock().getLocation().getY() + ", " + e.getBlock().getLocation().getZ());
 
         // Find the first multiBlock that is in bounds using streams
         Optional<IMultiBlock> multiBlockToRemove = multiBlocks.stream()
-                .filter(multiBlock -> {
-                    // Log the message instead of sending it to the player
-                    System.out.println("Checking bounds for " + multiBlock.location + " with scale " + multiBlock.displays.size());
-                    return multiBlock.inBounds(e.getBlock().getLocation());
-                })
+                .filter(multiBlock -> multiBlock.inBounds(e.getBlock().getLocation()))
                 .findFirst();
 
-        // Destroy the multiBlock if found
+        // Destroy the multiBlock if found and cancel the event
         multiBlockToRemove.ifPresent(IMultiBlock::destroy);
 
         e.setCancelled(true);
 
     }
 
+    @EventHandler
+    public void onMultiblockInteract(PlayerInteractEvent e) {
+        if (!e.getAction().isRightClick()) return;
+
+        if (e.getClickedBlock() == null || e.getClickedBlock().getType() != Material.BARRIER || e.getHand().ordinal() == 1) return;
+
+        Location location = e.getClickedBlock().getLocation();
+        UUID uuid = e.getPlayer().getUniqueId();
+
+        List<IMultiBlock> multiBlocks = IMultiBlock.playerMultiblocks.getOrDefault(uuid, new ArrayList<>());
+
+        // Find the first multiBlock that is in bounds using streams
+        Optional<IMultiBlock> multiBlockToInteract = multiBlocks.stream()
+                .filter(multiBlock -> multiBlock.inBounds(location))
+                .findFirst();
+
+        // Destroy the multiBlock if found
+        multiBlockToInteract.ifPresent(IMultiBlock::interact);
+    }
 
 }

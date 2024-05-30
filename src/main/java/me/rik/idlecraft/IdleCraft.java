@@ -71,7 +71,7 @@ public final class IdleCraft extends JavaPlugin
     {
         // Plugin shutdown logic
 
-        IMultiBlock.playerMultiblocks.keySet().forEach(uuid -> IMultiBlock.playerMultiblocks.get(uuid).forEach(IMultiBlock::removeFromWorld));
+        IMultiBlock.playerMultiblocks.keySet().forEach(uuid -> IMultiBlock.playerMultiblocks.get(uuid).forEach(IMultiBlock::hide));
 
         getLogger().info("Stopping IdleCraft");
 

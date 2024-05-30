@@ -2,6 +2,8 @@ package me.rik.idlecraft.database;
 
 import me.rik.idlecraft.interfaces.IMultiBlock;
 import me.rik.idlecraft.multiblocks.CraftingTable;
+import me.rik.idlecraft.multiblocks.RobotArm;
+import me.rik.idlecraft.multiblocks.StorageInterface;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -34,6 +36,13 @@ public class MultiblockService
                 switch (rs.getInt("type")) {
                     case 1:
                         multiblocks.add(new CraftingTable(location, uuid));
+                        break;
+                    case 2:
+                        multiblocks.add(new RobotArm(location, uuid));
+                        break;
+                    case 3:
+                        multiblocks.add(new StorageInterface(location, uuid));
+                        break;
                 }
             }
 
@@ -62,6 +71,13 @@ public class MultiblockService
                     switch (rs.getInt("type")) {
                         case 1:
                             multiblocks.add(new CraftingTable(location, UUID.fromString(rs.getString("uuid"))));
+                            break;
+                        case 2:
+                            multiblocks.add(new RobotArm(location, UUID.fromString(rs.getString("uuid"))));
+                            break;
+                        case 3:
+                            multiblocks.add(new StorageInterface(location, UUID.fromString(rs.getString("uuid"))));
+                            break;
                     }
                 }
 

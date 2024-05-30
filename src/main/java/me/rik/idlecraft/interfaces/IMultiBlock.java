@@ -1,16 +1,16 @@
 package me.rik.idlecraft.interfaces;
 
 import me.rik.idlecraft.database.MultiblockService;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Display;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class IMultiBlock
 {
@@ -32,37 +32,43 @@ public abstract class IMultiBlock
         this.location = location;
         this.uuid = uuid;
     }
-    public abstract void place();
 
-    public void destroy() {
-        //get the bounds of each display and remove the barrier blocks within
-        displays.forEach(display -> {
-            Location displayLocation = display.getLocation();
 
-            if (display instanceof BlockDisplay blockDisplay) {
-                Vector3f bdScale = blockDisplay.getTransformation().getScale();
+    public void place() {
+        int blockX = location.getBlockX();
+        int blockY = location.getBlockY();
+        int blockZ = location.getBlockZ();
 
-                for (int x = (int) displayLocation.getX(); x < displayLocation.getX() + bdScale.x; x++) {
-                    for (int y = (int) displayLocation.getY(); y < displayLocation.getY() + bdScale.y; y++) {
-                        for (int z = (int) displayLocation.getZ(); z < displayLocation.getZ() + bdScale.z; z++) {
-                            displayLocation.getWorld().getBlockAt(x, y, z).setType(Material.AIR);
-                        }
-                    }
+        int xSize = getXSize();
+        int ySize = getYSize();
+        int zSize = getZSize();
+
+        for (int x = blockX - (xSize/2); x < blockX + xSize - (xSize/2); x++)
+        {
+            for (int y = blockY; y < blockY + ySize; y++)
+            {
+                for (int z = blockZ - (zSize/2); z < blockZ + zSize - (zSize/2); z++)
+                {
+                    location.getWorld().getBlockAt(x, y, z).setType(Material.BARRIER);
                 }
             }
+        }
 
-            display.remove();
-        });
+        placeDisplays();
+    }
+
+
+    public abstract void placeDisplays();
+
+
+    public void destroy() {
+        hide();
 
         playerMultiblocks.get(uuid).remove(this);
-
-
-
-
         MultiblockService.removeMultiblock(uuid, this);
     }
 
-    public void removeFromWorld() {
+    public void hide() {
         displays.forEach(display -> {
             Location displayLocation = display.getLocation();
 
@@ -85,14 +91,10 @@ public abstract class IMultiBlock
     public boolean inBounds(Location location) {
         for (Display display : displays) {
 
-            System.out.println(displays.size());
-
             Location displayLocation = display.getLocation();
 
             if (display instanceof BlockDisplay blockDisplay) {
                 Vector3f bdScale = blockDisplay.getTransformation().getScale();
-
-                System.out.println("Checking bounds for " + displayLocation + " with scale " + bdScale);
 
                 if (location.getX() >= displayLocation.getX() && location.getX() < displayLocation.getX() + bdScale.x) {
                     if (location.getY() >= displayLocation.getY() && location.getY() < displayLocation.getY() + bdScale.y) {
@@ -107,5 +109,21 @@ public abstract class IMultiBlock
         return false;
     }
 
+    public void interact() {
+        Player player = Objects.requireNonNull(Bukkit.getPlayer(uuid));
+
+        player.sendMessage("Interacting with multiblock: " + getType());
+
+        Inventory multiblockInventory = Bukkit.createInventory(null, 27);
+
+        player.openInventory(multiblockInventory);
+    }
+
     public abstract int getType();
+
+    public abstract int getXSize();
+
+    public abstract int getYSize();
+
+    public abstract int getZSize();
 }
