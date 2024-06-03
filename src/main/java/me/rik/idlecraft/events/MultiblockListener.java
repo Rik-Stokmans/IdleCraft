@@ -51,7 +51,7 @@ public class MultiblockListener implements Listener
         e.setCancelled(true);
     }
 
-    @Deprecated
+
     @EventHandler
     public void onMultiblockBreak(BlockBreakEvent e)
     {
