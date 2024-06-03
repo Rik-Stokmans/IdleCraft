@@ -14,7 +14,6 @@
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
-    <li><a href="#contect">Contact</a></li>
   </ol>
 </details>
 
@@ -73,13 +72,6 @@ Don't forget to give the project a star! Thanks again!
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- CONTACT -->
-## Contact
-
-Rik Stokmans (Mail) - <a href="mailto:uptake_rolling.0h@icloud.com">
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
